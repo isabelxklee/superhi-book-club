@@ -3,14 +3,12 @@ import './App.css'
 import Book from './components/Book.jsx'
 import DetailPanel from './components/DetailPanel.jsx'
 import EmptyPanel from './components/EmptyPanel.jsx'
-import Search from './components/Search.jsx'
 import {ReactComponent as Logo} from './assets/logo.svg'
 
 class App extends Component {
   state = {
     books: [],
     selectedBook: null,
-    searchTerm: '',
   }
 
   async componentDidMount() {
@@ -31,29 +29,8 @@ class App extends Component {
     })
   }
 
-  handleSearchTerm = (input) => {
-    this.setState({
-      searchTerm: input,
-    })
-  }
-
-  filterBooks = () => {
-    const {searchTerm, books} = this.state
-
-    const stringSearch = (bookAttribute, searchTerm) =>
-      bookAttribute.toLowerCase().includes(searchTerm.toLowerCase())
-
-    if (searchTerm === '') {
-      return books
-    } else {
-      return books.filter(
-        (book) => stringSearch(book.title, searchTerm) || stringSearch(book.author, searchTerm)
-      )
-    }
-  }
-
   render() {
-    const {selectedBook, searchTerm} = this.state
+    const {books, selectedBook} = this.state
 
     return (
       <main>
@@ -64,10 +41,9 @@ class App extends Component {
             </a>
           </h1>
         </header>
-        <Search searchTerm={searchTerm} handleSearchTerm={this.handleSearchTerm} />
         <section className="main-container">
           <div className={selectedBook ? 'books-container inactive' : 'books-container active'}>
-            {this.filterBooks().map((book) => (
+            {books.map((book) => (
               <Book key={book.id} book={book} pickBook={this.pickBook} />
             ))}
           </div>
