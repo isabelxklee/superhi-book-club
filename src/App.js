@@ -39,11 +39,11 @@ const App = () => {
       <section className="main-container">
         <div className={selectedBook ? 'books-container inactive' : 'books-container active'}>
           {books.map((book) => (
-            <Book key={book.id} book={book} pickBook={pickBook()} />
+            <Book key={book.id} book={book} pickBook={pickBook} />
           ))}
         </div>
         {selectedBook ? (
-          <DetailPanel book={selectedBook} closePanel={closePanel()} />
+          <DetailPanel book={selectedBook} closePanel={closePanel} />
         ) : (
           <EmptyPanel />
         )}
