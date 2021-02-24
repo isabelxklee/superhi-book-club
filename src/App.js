@@ -1,61 +1,55 @@
-import React, {Component} from 'react'
+import React, {useState, useEffect} from 'react'
 import './App.css'
 import Book from './components/Book.jsx'
 import DetailPanel from './components/DetailPanel.jsx'
 import EmptyPanel from './components/EmptyPanel.jsx'
 import {ReactComponent as Logo} from './assets/logo.svg'
 
-class App extends Component {
-  state = {
-    books: [],
-    selectedBook: null,
+const App = () => {
+  const [books, setBooks] = useState([])
+  const [selectedBook, setSelectedBook] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('https://book-club-json.herokuapp.com/books')
+      const books = await response.json()
+      setBooks(books)
+    }
+
+    fetchData()
+  }, [])
+
+  const pickBook = (book) => {
+    setSelectedBook(book)
   }
 
-  async componentDidMount() {
-    const response = await fetch(`https://book-club-json.herokuapp.com/books`)
-    const booksArray = await response.json()
-    this.setState({books: booksArray})
+  const closePanel = () => {
+    setSelectedBook(null)
   }
 
-  pickBook = (book) => {
-    this.setState({
-      selectedBook: book,
-    })
-  }
-
-  closePanel = () => {
-    this.setState({
-      selectedBook: null,
-    })
-  }
-
-  render() {
-    const {books, selectedBook} = this.state
-
-    return (
-      <main>
-        <header>
-          <h1>
-            <a href="/">
-              <Logo alt="Graphic logo for SuperHi's Book Club" className="logo" />
-            </a>
-          </h1>
-        </header>
-        <section className="main-container">
-          <div className={selectedBook ? 'books-container inactive' : 'books-container active'}>
-            {books.map((book) => (
-              <Book key={book.id} book={book} pickBook={this.pickBook} />
-            ))}
-          </div>
-          {selectedBook ? (
-            <DetailPanel book={selectedBook} closePanel={this.closePanel} />
-          ) : (
-            <EmptyPanel />
-          )}
-        </section>
-      </main>
-    )
-  }
+  return (
+    <main>
+      <header>
+        <h1>
+          <a href="/">
+            <Logo alt="Graphic logo for SuperHi's Book Club" className="logo" />
+          </a>
+        </h1>
+      </header>
+      <section className="main-container">
+        <div className={selectedBook ? 'books-container inactive' : 'books-container active'}>
+          {books.map((book) => (
+            <Book key={book.id} book={book} pickBook={pickBook()} />
+          ))}
+        </div>
+        {selectedBook ? (
+          <DetailPanel book={selectedBook} closePanel={closePanel()} />
+        ) : (
+          <EmptyPanel />
+        )}
+      </section>
+    </main>
+  )
 }
 
 export default App
